@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Focatmo</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="{{ url_for('static', filename='Projectver2.css') }}">
+
+	<!-- JS -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <!-- 제이쿼리 -->
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+	<!-- 폰트주소 -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Do+Hyeon&display=swap" rel="stylesheet">
+
+	<script type="text/javascript">
+
+	$(function(){
+		$('.btn').click(function(){
+			$('.part01').hide();
+		});
+
+	});
+	// Example starter JavaScript for disabling form submissions if there are invalid fields
+	(function() {
+	  'use strict';
+	  window.addEventListener('load', function() {
+	    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+	    var forms = document.getElementsByClassName('needs-validation');
+	    // Loop over them and prevent submission
+	    var validation = Array.prototype.filter.call(forms, function(form) {
+	      form.addEventListener('submit', function(event) {
+	        if (form.checkValidity() === false) {
+	          event.preventDefault();
+	          event.stopPropagation();
+	        }
+	        form.classList.add('was-validated');
+	      }, false);
+	    });
+	  }, false);
+	})();
+
+	function openclose() {
+		if ( $('#textbox').css('display') == 'block') {
+			$('#textbox').hide();
+		}else {
+			$('#textbox').show();
+
+		}
+	}
+
+	function posting() {
+		let place = $('#place_give').val();
+	    let text = $('#text_give').val();
+	    let time = $('#time_give').val();
+	    let date = $('#date_give').val();
+
+	    $.ajax({
+	    	type:"POST",
+	    	url:"/post",
+	    	data: { place_give: place, time_give: time, text_give: text, date_give: date },
+	    	success: function(result){
+	    	}
+	    })
+	}
+
+   $(document).ready(function(){
+        $('#history-box').html('');
+        listing();
+      });
+   
+	  function listing(){
+	      $.ajax({
+	      type: "GET",
+	      url:"/post",
+	      data: {},
+	      success: function(response){	        
+	        if (response['result'] == 'success') {
+	          let histories = response['history'];
+	          for (let i = 0; i < histories.length; i++) {
+	                make_history(histories[i]['date'], histories[i]['time'], histories[i]['place'],histories[i]['text'])
+	             
+	          }
+	        } else {
+	          alert('만남을 불러오지 못했어요!');
+	        }
+	      }
+	    })
+	  }
+
+
+  function make_history(date, time, place, text) {
+    let temp_html = '<tr>\
+      <td>'+date+'</td>\
+      <td>'+time+'</td>\
+      <td>'+place+'</td>\
+      <td>'+text+'</td>\
+    </tr>';
+    $('#history-box').append(temp_html);
+  }
+
+
+</script>
+
+</head>
+
+<body>
+	<!-- /header -->
+	<header id="header" class="">
+		<p class="header_p">Focatmo</p>
+	</header>
+	<div class="cards" onclick="openclose()">
+		<div class="card01">
+			<div class="plus">
+				<h3 id="meet_give" class="catname">영접했다</h3>
+				<!-- <img src="https://cdn.thewirecutter.com/wp-content/uploads/2018/04/catbeds-2x1-05936.jpg" alt="냥냥이" class="cat01"> -->
+			</div>
+		</div>
+	</div>
+<!-- 입력필드  -->
+	<div id ="textbox" class="textfield" style="display: none;">
+		<div class="box">
+		<form>
+		  <label for="date_group" ></label>
+		  <input type='date' id='date_give'  style="none;"/><br>
+		</form>
+		<form class="needs-validation" novalidate>
+		  <div class="">
+		    <div class="time_group">
+		      <label for="validationCustom01"></label>
+		      <input type="text" autocomplete="off" class="tg" id="time_give" placeholder="오늘은 언제 냥이를 마주쳤나요?" onfocus="this.placeholder=''" onblur="this.placeholder='오늘은 언제 냥이를 마주쳤나요?'"required>
+		      <div class="valid-feedback">
+		        오! 이 시간에 마주쳤군요!
+		        </div>
+		      <div class="invalid-feedback">
+		        냥이를 마주친 시간을 입력해주세요!
+		      </div>
+		    </div>
+		  </div>
+
+		    <div class="place_group">
+		      <label for="validationCustom03"></label>
+		      <input type="text" autocomplete="off" class="tg" id="place_give" placeholder="오늘은 어디서 냥이를 마주쳤나요?" onfocus="this.placeholder=''" onblur="this.placeholder='오늘은 어디서 냥이를 마주쳤나요?'"required>
+		      <div class="invalid-feedback">
+		        냥이를 마주친 장소를 입력해주세요!
+		      </div>
+		       <div class="valid-feedback">
+		        오! 여기서 마주쳤군요!
+		      </div>
+		    </div>
+			<div class="text-group">
+			   <label for="exampleFormControlTextarea1"></label>
+			   <textarea id="text_give" rows="1" class="tg" placeholder="오늘 냥이에게 특이한 점이 있었나요? "onfocus="this.placeholder=''" onblur="this.placeholder='오늘 냥이에게 특이한 점이 있었나요?'"></textarea>
+			</div>
+
+		<button id="savebutton" onclick="posting()" class="" type="submit">만남 저장</button>
+		</form>
+	</div>
+
+	<div class="histories">
+	  <table class="table">
+	    <thead>
+	      <tr>
+	        <th scope="col">날짜</th>
+	        <th scope="col">시간</th>
+	        <th scope="col">장소</th>
+	        <th scope="col">특이사항</th>
+	      </tr>
+	    </thead>
+	    <tbody id="history-box">
+	      <tr>
+	        <td></td>
+	        <td></td>
+	      </tr>
+	    </tbody>
+	  </table>
+	</div>
+</div>
+</body>
+
+</html>
